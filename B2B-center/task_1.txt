@@ -1,0 +1,27 @@
+
+CREATE TABLE `users` (
+    `id`         INT(11) NOT NULL AUTO_INCREMENT,
+    `name`       VARCHAR(255) DEFAULT NULL,
+    `gender`     INT(1) COMMENT '0 - не указан, 1 - мужчина, 2 - женщина.',
+    `birth_date` timestamp NOT NULL COMMENT 'Дата в unixtime.',
+    PRIMARY KEY (`id`)
+);
+CREATE TABLE `phone_numbers` (
+    `id`      INT(11) NOT NULL AUTO_INCREMENT,
+    `user_id` INT(11) NOT NULL,
+    `phone`   VARCHAR(20) NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX indx_user_id (user_id),
+    FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
+Запрос 
+
+SELECT u.name, count(pn.id) count
+FROM users u 
+left join phone_numbers pn on pn.user_id = u.id
+where u.gender = 2 and
+TIMESTAMPDIFF(YEAR,t.created_at,CURDATE()) >= 18 and TIMESTAMPDIFF(YEAR,t.created_at,CURDATE()) <= 22
+GROUP by pn.user_id
